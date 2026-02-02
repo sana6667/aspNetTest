@@ -1,0 +1,16 @@
+variable "pub_sub_bastion" {
+    type = string
+}
+
+variable "conf_bastion_host" {
+    type = object({
+      path_ssh_key = string
+      family_ec2_instance = string 
+      name_sg_bastion = string
+    })
+    default = {
+        path_ssh_key = "C:/Users/shupt/.ssh/bastion.pub"
+        family_ec2_instance = "t3.micro"
+        name_sg_bastion = "bastion-sg"
+    }
+}
