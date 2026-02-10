@@ -5,6 +5,7 @@ on:
 permissions:
   id-token: write
   contents: read
+  actions: read
 
 jobs:
   ecr-build-push:
@@ -18,6 +19,8 @@ jobs:
         with:
           name: ecr-tfstate
           path: Terraform/module/stage/ecr-test
+          repository: sana6667/aspNetTest
+          run-id: 21874908988
 
       - name: Show files after download
         run: |
