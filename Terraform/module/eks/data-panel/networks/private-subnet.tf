@@ -6,5 +6,6 @@ resource "aws_subnet" "priv_sub" {
     map_public_ip_on_launch = false
     tags = {
         name = "priv-sub-${count.index}"
+
     }
 }

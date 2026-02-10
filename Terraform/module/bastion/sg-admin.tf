@@ -1,6 +1,7 @@
 resource "aws_security_group" "bastion_sg" {
     name = "Bastion-sg"
     description = "Sg admin host"
+    vpc_id = var.conf_net_export.vpc_id_value
     ingress {
         from_port = 22
         to_port = 22

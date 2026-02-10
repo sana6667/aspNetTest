@@ -14,3 +14,10 @@ variable "conf_bastion_host" {
         name_sg_bastion = "bastion-sg"
     }
 }
+
+variable "conf_net_export" {
+    type = object({
+        sub_priv_value = list(string)
+        vpc_id_value = string
+    })
+}

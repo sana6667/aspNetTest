@@ -7,7 +7,7 @@ variable "config_workers" {
     })
     default = {
         node_gr_name = "prod-node-gr"
-        iam_role_name = "eks-cluster-nodes"
+        iam_role_name = "eks-node-role"
         instance_typ_value = "t3.small"
         label_value = "nodes"
     }
@@ -22,5 +22,6 @@ variable "conf_eks_import" {
 variable "conf_network_import" {
     type = object({
         sub_priv_value = list(string)
+        vpc_id_value = string
     })
 }

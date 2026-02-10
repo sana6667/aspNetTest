@@ -5,9 +5,9 @@ resource "aws_eks_node_group" "node_gr" {
     instance_types = [var.config_workers.instance_typ_value]
     subnet_ids = var.conf_network_import.sub_priv_value
     scaling_config {
-        desired_size = 2
-        max_size = 4
-        min_size = 2
+        desired_size = 1
+        max_size = 1
+        min_size = 1
     }
     update_config {
         max_unavailable = 1
@@ -15,5 +15,10 @@ resource "aws_eks_node_group" "node_gr" {
     labels = {
         name = var.config_workers.label_value
     }
-    depends_on = [aws_iam_role_policy_attachment.amazon_eks_worker_node_policy]
+    depends_on = [ 
+        aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
+        aws_iam_role_policy_attachment.amazon_eks_cni_policy,
+        aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
+        aws_iam_role_policy_attachment.amazon_ssm_managed_instance_core
+     ]
 }

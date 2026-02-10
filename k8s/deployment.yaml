@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aspnet-app
+  namespace: app
+  labels:
+    app: aspnet-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: aspnet-app
+  template:
+    metadata:
+      labels:
+        app: aspnet-app
+    spec:
+      containers:
+        - name: aspnet-app
+          image: nginx  # placeholder, GitHub Actions заменит на ECR образ
+          ports:
+            - containerPort: 80   # ASP.NET слушает 80 — EXPOSE в Dockerfile
+          env:
+            - name: CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: app-db-secret
+                  key: CONNECTION_STRING
+
+            # Дублируем настройку из Dockerfile — это нормальная практика
+            - name: ASPNETCORE_URLS
+              value: "http://+:80"
+
+          # readiness/liveness — важны для продакшена
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+
+      # Анти‑афинити — чтобы поды не падали на один нод
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: "kubernetes.io/hostname"
+                labelSelector:
+                  matchLabels:
+                    app: aspnet-app
