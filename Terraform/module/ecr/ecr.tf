@@ -8,6 +8,7 @@ resource "aws_ecr_repository" "my_ecr" {
     tags = {
         Project = "diploma"
     }
+    force_delete = true
 }
 
 resource "aws_ecr_lifecycle_policy" "my_ecr_policy" {
