@@ -3,11 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using AspNetLoginApp; // для AppDbContext
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Добавляем MVC
 builder.Services.AddControllersWithViews();
 
-var builder = WebApplication.CreateBuilder(args);
 
 // 1. Берём connection string из переменной окружения (EKS)
 // если её нет — fallback на appsettings.json
