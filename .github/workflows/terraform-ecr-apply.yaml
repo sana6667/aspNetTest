@@ -30,7 +30,7 @@ jobs:
               working-directory: Terraform/module/stage/ecr-test
               run: terraform apply -auto-approve
             - name: Upload artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: ecr-tfstate
                 path: Terraform/module/stage/ecr-test/terraform.tfstate

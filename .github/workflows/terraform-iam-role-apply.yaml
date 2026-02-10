@@ -28,7 +28,7 @@ jobs:
               working-directory: Terraform/module/stage/iam-policy-test
               run: terraform apply -auto-approve
             - name: upload State
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: iam-tfstate
                 path: Terraform/module/stage/iam-policy-test/terraform.tfstate
