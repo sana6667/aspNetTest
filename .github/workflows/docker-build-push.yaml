@@ -21,6 +21,7 @@ jobs:
           path: Terraform/module/stage/ecr-test
           repository: sana6667/aspNetTest
           run-id: 21874908988
+          github-token: ${{ github.token }}
 
       - name: Show files after download
         run: |
