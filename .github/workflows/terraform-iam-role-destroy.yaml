@@ -1,0 +1,35 @@
+name: Terraform iam role destroy
+on:
+    workflow_dispatch:
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    terraform-destroy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Download artifact
+              uses: actions/download-artifact@v4
+              with:
+                name: iam-tfstate
+                path: Terraform/module/stage/iam-policy-test
+            - name: Terraform setup
+              uses: hashicorp/setup-terraform@v3
+              with:
+                terraform_version: 1.14.4
+            - name: Aws config credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                role-to-assume: arn:aws:iam::336670698191:role/bootstrap-role
+                aws-region: us-east-1
+            - name: Terraform init
+              working-directory: Terraform/module/stage/iam-policy-test
+              run: terraform init
+            - name: Terraform destroy
+              working-directory: Terraform/module/stage/iam-policy-test
+              run: terraform destroy -auto-approve
+

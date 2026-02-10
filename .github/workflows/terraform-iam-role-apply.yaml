@@ -1,0 +1,34 @@
+name: Terraform iam role apply
+on:
+    workflow_dispatch:
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    iam-apply:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@v3
+              with:
+                terraform_version: 1.14.4
+            - name: Configure Aws Credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                role-to-assume: arn:aws:iam::336670698191:role/bootstrap-role
+                aws-region: us-east-1
+            - name: Terraform init
+              working-directory: Terraform/module/stage/iam-policy-test
+              run: terraform init
+            - name: Terraform apply
+              working-directory: Terraform/module/stage/iam-policy-test
+              run: terraform apply -auto-approve
+            - name: upload State
+              uses: actions/upload-artifact@v3
+              with:
+                name: iam-tfstate
+                path: Terraform/module/stage/iam-policy-test/terraform.tfstate

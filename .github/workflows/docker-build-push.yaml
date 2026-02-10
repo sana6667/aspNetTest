@@ -1,0 +1,49 @@
+name: Docker build and push ecr
+on:
+    workflow_dispatch:
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    ecr-bild-push:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: download artifact
+              uses: actions/download-artifact@v3
+              with:
+                name: ecr-tfstate
+                path: Terraform/module/stage/ecr-test
+            - name: Terraform setup
+              uses: hashicorp/setup-terraform@v3
+              with:
+                terraform_version: 1.14.4
+            - name: Aws credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                role-to-assume: arn:aws:iam::336670698191:role/github-deploy-role
+                aws-region: us-east-1
+            - name: Terraform init
+              working-directory: Terraform/module/stage/ecr-test
+              run: terraform init
+            - name: Read Ecr outputs
+              id: ecr
+              working-directory: Terraform/module/stage/ecr-test
+              run: | 
+                echo "ECR_URL=$(terraform output -raw ecr_url)" >> "$GITHUB_OUTPUT"
+                echo "ECR_ENDPOINT=$(terraform output -raw ecr_endpoint)" >> "$GITHUB_OUTPUT"
+                echo "ECR_REGION=$(terraform output -raw ecr_region)" >> "$GITHUB_OUTPUT"
+            - name: Docker image build
+              run: docker build -t diplom-app -f app/Dockerfile app
+            - name: Docker image tag
+              run: docker tag diplom-app:latest ${{ steps.ecr.outputs.ECR_URL }}:latest
+            - name: Ecr login
+              run: | 
+                aws ecr get-login-password --region "${{  steps.ecr.outputs.ECR_REGION }}" \
+                  | docker login --username AWS --password-stdin "${{ steps.ecr.outputs.ECR_ENDPOINT }}"
+            - name: Push Ecr
+              run: docker push "${{ steps.ecr.outputs.ECR_URL }}:latest"
+            
