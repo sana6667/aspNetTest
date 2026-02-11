@@ -38,7 +38,7 @@ resource "aws_security_group" "mysql_sg" {
 
 resource "aws_db_instance" "my_rds_mysql" {
     allocated_storage = 20
-    db_name = "socnetdb"
+    db_name = "aspnetdb"
     engine = "mysql"
     engine_version = "8.0"
     instance_class = "db.t3.micro"
