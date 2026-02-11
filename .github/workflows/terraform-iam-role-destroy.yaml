@@ -5,6 +5,7 @@ on:
 permissions:
     id-token: write
     contents: read
+    actions: read
 
 jobs:
     terraform-destroy:
@@ -17,6 +18,8 @@ jobs:
               with:
                 name: iam-tfstate
                 path: Terraform/module/stage/iam-policy-test
+                run-id: 21874851136
+                github-token: ${{ github.token }}
             - name: Terraform setup
               uses: hashicorp/setup-terraform@v3
               with:
