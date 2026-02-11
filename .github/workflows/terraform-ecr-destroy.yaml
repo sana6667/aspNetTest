@@ -1,6 +1,11 @@
 name: Terraform ECR destroy
 on:
     workflow_dispatch:
+      inputs:
+        Runner_Id:
+          type: string
+          description: "Enter runner id"
+          required: true
 
 permissions:
     id-token: write
@@ -18,7 +23,7 @@ jobs:
               with:
                 name: ecr-tfstate
                 path: Terraform/module/stage/ecr-test
-                run-id: 21874908988
+                run-id: ${{ inputs.Runner_Id }}
                 github-token: ${{ github.token }}
             - name: Terraform setup
               uses: hashicorp/setup-terraform@v3
