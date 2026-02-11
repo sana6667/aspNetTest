@@ -54,6 +54,6 @@ resource "aws_db_instance" "my_rds_mysql" {
 }
 
 output "rds_enpoint" {
-    value = aws_db_instance.my_rds_mysql.endpoint
+    value = aws_db_instance.my_rds_mysql.address
 }
 
