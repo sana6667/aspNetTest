@@ -57,22 +57,22 @@ output "ecr_region" {
   value = module.ecr.region_ecr
 }
 
-output "alb_controller_role" {
-  description = "Alb controller role"
-  value = module.policy.alb_controller_arn
-}
+# output "alb_controller_role" {
+#   description = "Alb controller role"
+#   value = module.policy.alb_controller_arn
+# }
 
-output "oidc_role" {
-  description = "OIDC role"
-  value = module.policy.github_oidc_role_arn
-}
+# output "oidc_role" {
+#   description = "OIDC role"
+#   value = module.policy.github_oidc_role_arn
+# }
 
-output "deploy_role" {
-  description = "Deployment role"
-  value = module.policy.github_deploy_role_arn
-}
+# output "deploy_role" {
+#   description = "Deployment role"
+#   value = module.policy.github_deploy_role_arn
+# }
 
-output "terraform_role" {
-  description = "Terraform role"
-  value = module.policy.github_terraform_role_arn
-}
+# output "terraform_role" {
+#   description = "Terraform role"
+#   value = module.policy.github_terraform_role_arn
+# }
