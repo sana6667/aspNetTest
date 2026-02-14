@@ -90,7 +90,7 @@ jobs:
             - name: Describe cluster directly
               run: aws eks describe-cluster --region "${AWS_REGION}" --name "${CLUSTER_NAME}"
             - name: update kubeconfig
-              run: aws eks update-kubeconfig --region "$AWS_REGION" --name "$CLUSTER_NAME"
+              run: aws eks update-kubeconfig --region "${{ env.AWS_REGION }}" --name "${{ steps.tf_outputs.outputs.CLUSTER_NAME }}"
             - name: Apply k8s manifest
               run: | 
                 kubectl apply -f "${{ env.K8S_OUT_DIR }}/service.yaml"
