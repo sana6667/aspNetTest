@@ -22,7 +22,7 @@ jobs:
               with:
                 terraform_version: 1.14.4
             - name: AWS Credentials
-              uses: aws-actions/configure-aws-credentials@4
+              uses: aws-actions/configure-aws-credentials@v4
               with:
                 role-to-assume: ${{ secrets.AWS_TERRAFORM_ROLE }}
                 aws-region: ${{ env.AWS_REGION }}
