@@ -9,7 +9,7 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
 spec:
   rules:
-    host: api.soc-net.lat
+    - host: api.soc-net.lat
       http:
         paths:
           - path: /
