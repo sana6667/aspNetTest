@@ -6,5 +6,8 @@ resource "aws_subnet" "pub_sub" {
     map_public_ip_on_launch = true
     tags = {
         name = "pub-sub-${count.index}"
+        "kubernetes.io/role/elb" = 1
+        "kubernetes.io/cluster/priv-cluster-eks" = "shared"
+
     }
 }

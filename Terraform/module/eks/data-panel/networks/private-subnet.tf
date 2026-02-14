@@ -6,6 +6,11 @@ resource "aws_subnet" "priv_sub" {
     map_public_ip_on_launch = false
     tags = {
         name = "priv-sub-${count.index}"
+        # если когда‑то захочешь internal ALB
+        "kubernetes.io/role/internal-elb" = 1
+
+        # ОБЯЗАТЕЛЬНО ВСЕГДА
+        "kubernetes.io/cluster/priv-cluster-eks" = "shared"
 
     }
 }
