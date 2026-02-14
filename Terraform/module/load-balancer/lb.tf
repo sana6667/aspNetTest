@@ -2,7 +2,7 @@ terraform {
     required_providers {
       aws = {
         source = "hashicorp/aws"
-        version = "~>5.60"
+        version = "~> 5.60"
       }
     }
 }
@@ -28,7 +28,7 @@ data "aws_lb" "backend_lb" {
 
 resource "aws_route53_record" "backend_cname" {
     zone_id = data.aws_route53_zone.main_zone.id
-    name = var.conf_cloudFron.sub_dns_alb
+    name = var.dns_lb
     type = "A"
     alias {
         name = data.aws_lb.backend_lb.dns_name

@@ -76,7 +76,7 @@ jobs:
               run: | 
                 export CLUSTER_NAME ECR_URL DB_HOST DB_NAME DB_USER DB_PASSWORD DB_PORT
                 envsubst < "${{ env.K8S_TPL_DIR }}/deployment.yaml.tpl" > "${{ env.K8S_OUT_DIR }}/deployment.yaml"
-                envsubst < "${{ env.K8S_TPL_DIR }}/service.yaml.tpl" > "${{ env.K8S_OUT_DIR }}/sevice.yaml"
+                envsubst < "${{ env.K8S_TPL_DIR }}/service.yaml.tpl" > "${{ env.K8S_OUT_DIR }}/service.yaml"
                 envsubst < "${{ env.K8S_TPL_DIR }}/ingress.yaml.tpl" > "${{ env.K8S_OUT_DIR }}/ingress.yaml"
             - name: update kubeconfig
               run: aws eks update-kubeconfig --region "$AWS_REGION" --name "$CLUSTER_NAME"
