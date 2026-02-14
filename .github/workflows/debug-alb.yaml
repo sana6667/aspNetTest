@@ -33,7 +33,11 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_TERRAFORM_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
-
+    
+      - name: Terraform setup
+        uses: hashicorp/setup-terraform@v3
+        with:
+            terraform_version: 1.14.4
       - name: Terraform init
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init
