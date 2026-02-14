@@ -31,3 +31,48 @@ output "node_role_arn" {
 output "eks_oidc" {
   value = module.eks_cluster.oidc_eks
 }
+
+output "vpc_id" {
+  description = "Vpc id"
+  value = module.network.network_conf_export.vpc_id_value
+}
+
+output "pub_sub_ids" {
+  description = "Public subnet ids"
+  value = module.network.pub_sub_ids
+}
+
+output "ecr_endpoint" {
+  description = "ECR Endpoint"
+  value = module.ecr.registry_endpoint
+}
+
+output "ecr_url" {
+  description = "ECR URL"
+  value = module.ecr.conf_ecr_export
+}
+
+output "ecr_region" {
+  description = "ECR Region"
+  value = module.ecr.region_ecr
+}
+
+output "alb_controller_role" {
+  description = "Alb controller role"
+  value = module.policy.alb_controller_arn
+}
+
+output "oidc_role" {
+  description = "OIDC role"
+  value = module.policy.github_oidc_role_arn
+}
+
+output "deploy_role" {
+  description = "Deployment role"
+  value = module.policy.github_deploy_role_arn
+}
+
+output "terraform_role" {
+  description = "Terraform role"
+  value = module.policy.github_terraform_role_arn
+}

@@ -8,4 +8,7 @@ output "network_conf_export" {
         vpc_id_value = aws_vpc.vpc_data_panel.id
     }
 }
+output "pub_sub_ids" {
+    value = aws_subnet.pub_sub[*].id
+}
 

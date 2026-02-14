@@ -38,3 +38,7 @@ module "cloudFront" {
 module "policy" {
     source = "./iam-roles"
 }
+
+module "ecr" {
+    source = "./ecr"
+}

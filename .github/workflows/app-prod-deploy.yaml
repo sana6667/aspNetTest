@@ -1,0 +1,95 @@
+name: App deploy
+on:
+    workflow_dispatch:
+        inputs:
+            Runner_Id:
+                type: string
+                description: "Enter runner Id"
+                required: true
+permissions:
+    id-token: write
+    contents: read
+    actions: read
+
+env:
+    TF_WORKING_DIR: Terraform/module
+    AWS_REGION: ${{ secrets.AWS_REGION }}
+    IMAGE_TAG: ${{ github.sha }}
+    K8S_TPL_DIR: k8s/templates
+    K8S_OUT_DIR: k8s/out
+
+jobs:
+    app_deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Terraform setup
+              uses: hashicorp/setup-terraform@v4
+              with:
+                terraform_version: 1.14.4
+            - name: Download artifacts
+              uses: actions/download-artifact@v4
+              with:
+                name: infra-prod-tf
+                path: ${{ env.TF_WORKING_DIR }}
+                run-id: ${{ inputs.Runner_Id }}
+                github-token: ${{ github.token }}
+            - name: AWS credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                role-to-assume: ${{ secrets.AWS_TERRAFORM_ROLE }}
+                aws-region: ${{ env.AWS_REGION }}
+            - name: Terraform init
+              working-directory: ${{ env.TF_WORKING_DIR }}
+              run: terraform init
+            - name: tf outputs
+              id: tf_outputs
+              working-directory: ${{ env.TF_WORKING_DIR }}
+              run: | 
+                echo "CLUSTER_NAME=$(terraform output -raw eks_cluster_name)" >> "$GITHUB_OUTPUT"
+                echo "ECR_URL=$(terraform output -raw ecr_url)" >> "$GITHUB_OUTPUT"
+                echo "DB_HOST=$(terraform output -raw rds_endpoint)" >> "$GITHUB_OUTPUT"
+                echo "DB_PORT=$(terraform output -raw rds_port)" >> "$GITHUB_OUTPUT"
+                echo "ECR_ENDPOINT=$(terraform output -raw ecr_endpoint)" >> "$GITHUB_OUTPUT"
+            - name: Docker build
+              run: docker build -t diplom-app -f app/Dockerfile app
+            - name: docker image tag
+              run: docker tag diplom-app:latest ${{ steps.tf_outputs.outputs.ECR_URL }}:latest
+            - name: ecr login
+              run: | 
+                aws ecr get-login-password --region "${{ env.AWS_REGION }}" \
+                  | docker login --username AWS --password-stdin "${{ steps.tf_outputs.outputs.ECR_ENDPOINT }}"
+            - name: docker push
+              run: docker push "${{ steps.tf_outputs.outputs.ECR_URL }}:latest"
+            - name: Install envsubst & jq
+              run: sudo apt-get update && sudo apt-get install -y gettext-base jq
+            - name: Prepare k8s manifests (envsubst)
+              env:
+                CLUSTER_NAME: ${{ steps.tf_outputs.outputs.CLUSTER_NAME}}
+                ECR_URL: ${{ steps.tf_outputs.outputs.ECR_URL}}
+                DB_HOST: ${{ steps.tf_outputs.outputs.DB_HOST}}
+                DB_PORT: ${{ steps.tf_outputs.outputs.DB_PORT}}
+                DB_NAME: ${{ secrets.DB_NAME}}
+                DB_USER: ${{ secrets.DB_USERNAME}}
+                DB_PASSWORD: ${{ secrets.DB_PASS }}
+              run: | 
+                export CLUSTER_NAME ECR_URL DB_HOST DB_NAME DB_USER DB_PASSWORD DB_PORT
+                envsubst < "${{ env.K8S_TPL_DIR }}/deployment.yaml.tpl" > "${{ env.K8S_OUT_DIR }}/deployment.yaml"
+                envsubst < "${{ env.K8S_TPL_DIR }}/service.yaml.tpl" > "${{ env.K8S_OUT_DIR }}/sevice.yaml"
+                envsubst < "${{ env.K8S_TPL_DIR }}/ingress.yaml.tpl" > "${{ env.K8S_OUT_DIR }}/ingress.yaml"
+            - name: update kubeconfig
+              run: aws eks update-kubeconfig --region "$AWS_REGION" --name "$CLUSTER_NAME"
+            - name: Apply k8s manifest
+              run: | 
+                kubectl apply -f "${{ env.K8S_OUT_DIR }}/service.yaml"
+                kubectl apply -f "${{ env.K8S_OUT_DIR }}/deployment.yaml"
+                kubectl apply -f "${{ env.K8S_OUT_DIR }}/ingress.yaml"
+                kubectl rollout status deploy/backend-deploy -n default --timeout=180s
+            
+
+
+            
+              
+            
+              

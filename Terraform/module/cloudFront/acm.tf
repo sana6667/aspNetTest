@@ -3,12 +3,7 @@ data "aws_route53_zone" "main_zone" {
     private_zone = false
 }
 
-data "aws_lb" "backend_lb" {
-    tags = {
-        "kubernetes.io/ingress-name" = "backend"
-        "kubernetes.io/cluster/priv-cluster-eks" = "owned"
-    }
-} 
+
 
 resource "aws_acm_certificate" "cert" {
     domain_name = var.conf_cloudFron.dns_name
@@ -19,17 +14,7 @@ resource "aws_acm_certificate" "cert" {
     ]
 }
 
-resource "aws_route53_record" "backend_cname" {
-    zone_id = data.aws_route53_zone.main_zone.id
-    name = var.conf_cloudFron.sub_dns_alb
-    type = "A"
-    alias {
-        name = data.aws_lb.backend_lb.dns_name
-        zone_id = data.aws_lb.backend_lb.zone_id
-        evaluate_target_health = false
-    }
-    
-}
+
 
 resource "aws_route53_record" "cn_cdn" {
     zone_id = data.aws_route53_zone.main_zone.id
