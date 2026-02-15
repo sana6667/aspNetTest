@@ -57,6 +57,8 @@ output "ecr_region" {
   value = module.ecr.region_ecr
 }
 
+
+
 # output "alb_controller_role" {
 #   description = "Alb controller role"
 #   value = module.policy.alb_controller_arn

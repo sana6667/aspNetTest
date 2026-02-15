@@ -42,3 +42,10 @@ module "cloudFront" {
 module "ecr" {
     source = "./ecr"
 }
+
+module "oidc_eks" {
+    source = "./oidc-alb-controller"
+    cluster_name = module.eks_cluster.conf_eks_export
+    oidc_issued_url = module.eks_cluster.oidc_eks
+    depends_on = [ module.eks_cluster ]
+}
