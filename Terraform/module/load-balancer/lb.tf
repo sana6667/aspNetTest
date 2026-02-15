@@ -20,8 +20,9 @@ data "aws_route53_zone" "main_zone" {
 data "aws_lb" "backend_lb" {
     tags = {
         "elbv2.k8s.aws/cluster" = "priv-cluster-eks"
-        "kubernetes.io/ingress-name" = "backend"
-        "kubernetes.io/service-name" = "default/backend-service"
+        "ingress.k8s.aws/stack" = "default/backend"
+        "ingress.k8s.aws/resource" = "LoadBalancer"
+
 
     }
 } 
