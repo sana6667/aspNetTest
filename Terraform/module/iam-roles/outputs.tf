@@ -10,7 +10,5 @@ output "github_oidc_role_arn" {
     value = aws_iam_openid_connect_provider.git_hub.arn
 }
 
-output "alb_controller_arn" {
-    value = aws_iam_role.alb_cont_role.arn
-}
+
 
