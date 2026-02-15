@@ -30,7 +30,3 @@ output "oidc" {
     value = module.iam_policy.github_oidc_role_arn
 }
 
-output "alb_cont_arn" {
-    description = "Arn alb controller role"
-    value = module.iam_policy.alb_controller_arn
-}
