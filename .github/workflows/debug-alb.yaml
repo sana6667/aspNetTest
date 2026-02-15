@@ -55,6 +55,14 @@ jobs:
 
       - name: Show ingress
         run: kubectl get ingress -A
+      - name: Info endpoints
+        run: | 
+          kubectl -n default get endpoints backend-service -o wide
+          kubectl -n default describe endpoints backend-service
+      - name: Pod status
+        run: | 
+          kubectl -n default get pods -l app=backend -o wide
+          kubectl -n default describe pod -l app=backend
 
       - name: Describe ingress backend
         run: kubectl describe ingress backend -n default
